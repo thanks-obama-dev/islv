@@ -1,53 +1,47 @@
 1] 
 `timescale 1ns/1ps
-module alu_bit(
-input [31:0]A,
-input [31:0]B,
-input [31:0]Alu_Sel,
-output reg [31:0]Alu_Out,
-output Zero
-);
-assign Zero=(Alu_Out==32'b0);
-always @(*) begin
-case(Alu_Sel)
-4'b0000:Alu_Out=A+B;
-4'b0001:Alu_Out=A-B;
-4'b0010:Alu_Out=A&B;
-4'b0011:Alu_Out=A|B;
-4'b0100:Alu_Out=A^B;
-4'b0101:Alu_Out=~A;
-4'b0110:Alu_Out=A<<1;
-4'b0111:Alu_Out=A>>1;
-4'b1000:Alu_Out=(A<B)? 32'd1:32'd0;
-default :Alu_Out=32'b0;
+module alu_32bit_case(y,a,b,f);
+input [31:0]a;
+input [31:0]b;
+input [2:0]f;
+output reg [31:0]y;
+always@(*)
+begin
+  case(f)
+3'b000:y=a&b;
+3'b001:y=a|b;
+3'b010:y=~(a|b);
+3'b011:y=~(a&b);
+3'b010:y=a+b;
+3'b011:y=a-b;
+3'b100:y=a*b;
+default:y=32'bx;
 endcase
 end
-endmodule
+endmodule 
 ------------------------------------------------------
 `timescale 1ns/1ps
-module alu_bit(
-input [31:0]A,
-input [31:0]B,
-input [31:0]Alu_Sel,
-output reg [31:0]Alu_Out,
-output Zero
-);
-assign Zero=(Alu_Out==32'b0);
-always @(*) begin
-case(Alu_Sel)
-4'b0000:Alu_Out=A+B;
-4'b0001:Alu_Out=A-B;
-4'b0010:Alu_Out=A&B;
-4'b0011:Alu_Out=A|B;
-4'b0100:Alu_Out=A^B;
-4'b0101:Alu_Out=~A;
-4'b0110:Alu_Out=A<<1;
-4'b0111:Alu_Out=A>>1;
-4'b1000:Alu_Out=(A<B)? 32'd1:32'd0;
-default :Alu_Out=32'b0;
-endcase
+module alu_32bit_tb_case;
+reg [31:0]a;
+reg [31:0]b;
+reg [2:0]f;
+wire [31:0]y;
+alu_32bit_case test2(.y(y), .a(a), .b(b), .f(f));
+initial
+begin
+a=32'h00000000;
+b=32'hFFFFFFFF;
+#10 f=3'b000;
+#10 f=3'b001;
+#10 f=3'b010;
+#10 f=3'b010;
+#10 f=3'b011;
+#10 f=3'b100;
 end
-endmodule
+initial
+#50 $finish;
+endmodule 
+
 ------------------------------------------------------------------
 
 -----------------------------------------------------------------
